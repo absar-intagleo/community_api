@@ -1,6 +1,11 @@
 class MessagesController < ApplicationController
-	before_action :validate_token, only: [:create, :mark_read]
+	before_action :validate_token, only: [:index, :create, :mark_read]
 	before_action :validate_message_params, only: :create
+
+	def index
+		@messages = Conversation.includes(messages: [:readers, :user]).find(params[:conversation_id]).try(:messages) rescue nil
+		render 'index', status: @messages.present? ? 200 : 404
+	end
 
 	def create
 		@message = Message.new(conversation_id: params[:conversation_id], text: params[:text], user_id: @current_user.id)
