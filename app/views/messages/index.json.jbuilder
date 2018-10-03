@@ -24,7 +24,7 @@ if @messages.present?
 			  json.cover_cropped message_user.cover_cropped
 			end
 		end
-end
+	end
 else
   json.ok false
   json.status 404

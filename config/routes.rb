@@ -20,4 +20,11 @@ Rails.application.routes.draw do
   		post :mark_read
   	end
   end
+
+  resources :friendships, only: :index
+  resources :invitations, only: [:index, :create] do
+  	collection do
+  		post :accept
+  	end
+  end
 end

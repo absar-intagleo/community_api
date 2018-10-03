@@ -1,0 +1,30 @@
+json.ok true
+json.status 200
+json.id @invite.id 
+json.message @invite.message 
+json.created_at @invite.created_at
+json.updated_at @invite.updated_at
+json.from_user do
+  json.id @invite.user.id
+  json.first_name @invite.user.first_name
+  json.last_name @invite.user.last_name
+  json.email @invite.user.email
+  json.uuid @invite.user.uuid
+  json.absolute_url @invite.user.absolute_url
+  json.avatar @invite.user.avatar
+  json.avatar_thumbnail @invite.user.avatar_thumbnail
+  json.cover @invite.user.cover
+  json.cover_cropped @invite.user.cover_cropped
+end
+json.to_user do
+  json.id @invite.friend.id
+  json.first_name @invite.friend.first_name
+  json.last_name @invite.friend.last_name
+  json.email @invite.friend.email
+  json.uuid @invite.friend.uuid
+  json.absolute_url @invite.friend.absolute_url
+  json.avatar @invite.friend.avatar
+  json.avatar_thumbnail @invite.friend.avatar_thumbnail
+  json.cover @invite.friend.cover
+  json.cover_cropped @invite.friend.cover_cropped
+end
