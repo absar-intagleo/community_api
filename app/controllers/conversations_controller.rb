@@ -21,7 +21,7 @@ class ConversationsController < ApplicationController
 	end
 
 	def mark_read
-		if @current_user.conversation_users.find_by_conversation_id(params[:conversation_id]).update_attribute(is_read: true)
+		if @current_user.conversation_users.find_by_conversation_id(params[:conversation_id]).update_attributes(is_read: true)
 			render(json: {ok: true }, status: 200)
 		else
 			render(json: {ok: false, error: "Not Found" }, status: 404)
