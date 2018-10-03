@@ -7,7 +7,7 @@ class Message < ApplicationRecord
   has_one_attached :attachment
 
   
-  after_create :mark_conversation_as_unread
+  after_create :mark_conversation_as_unread_for_all_other_users
 
   scope :except_current_user, -> (current_user_id) { where.not(id: current_user_id) }
 
