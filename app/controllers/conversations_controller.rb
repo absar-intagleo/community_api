@@ -21,7 +21,10 @@ class ConversationsController < ApplicationController
 	end
 
 	def mark_read
-		if @current_user.conversation_users.find_by_conversation_id(params[:conversation_id]).update_attributes(is_read: true)
+		conversation_user = @current_user.conversation_users.find_by_conversation_id(params[:conversation_id])
+		if conversation_user.present? 
+			conversation_user.update_attributes(is_read: true)
+			conversation_user.conversation.messages.map{ |c| c.readers.find_or_create_by!(user_id: @current_user.id)} if conversation_user.conversation.messages.present?
 			render(json: {ok: true }, status: 200)
 		else
 			render(json: {ok: false, error: "Not Found" }, status: 404)
