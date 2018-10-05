@@ -1,6 +1,7 @@
 class InvitationsController < ApplicationController
 	before_action :validate_token, only: [:index, :create, :accept]
 	before_action :validate_invitation_params, only: :create
+	before_action :validate_accept_params, only: :accept
 	
 	def index
 		@invitations = @current_user.present? ? Friendship.where(friend_id: @current_user.id, status: 1) : nil
@@ -17,7 +18,7 @@ class InvitationsController < ApplicationController
 	end
 
 	def accept
-		@invitation = Friendship.find(params[:request_id])
+		@invitation = Friendship.where(user_id: params[:user_id], friend_id: @current_user.id).try(:first)
 		if @invitation.present? && @invitation.status == 1
 			@invitation.update_attributes(status: 2)
 			render(json: {success: true}, status: 200)
@@ -28,6 +29,14 @@ class InvitationsController < ApplicationController
 
 	private
 
+	def validate_accept_params
+		@error_message = []
+		@error_message << "user_id must be present." unless params[:user_id].present?
+
+		if @error_message.present?
+			render(json: {ok: false, error: @error_message, status: 401}, status: 401) and return
+		end
+	end
 	def validate_invitation_params
 		@error_message = []
 		@error_message << "friend_id must be present." unless params[:friend_id].present?
