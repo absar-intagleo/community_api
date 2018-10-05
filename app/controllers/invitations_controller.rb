@@ -3,8 +3,7 @@ class InvitationsController < ApplicationController
 	before_action :validate_invitation_params, only: :create
 	
 	def index
-		friendships = @current_user.friendships
-		@invitations = friendships.present? ? friendships.invites_of_user(@current_user.id) : nil
+		@invitations = @current_user.present? ? Friendship.where(friend_id: @current_user.id, status: 1) : nil
 	end
 
 	def create

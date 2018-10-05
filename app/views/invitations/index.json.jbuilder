@@ -8,17 +8,17 @@ if @invitations.present?
       json.status  invitation.status == 1 ? "pending" : "approved"
       json.created_at invitation.created_at
       json.updated_at invitation.updated_at
-      json.to_user do
-        json.id invitation.friend.id
-        json.first_name invitation.friend.first_name
-        json.last_name invitation.friend.last_name
-        json.email invitation.friend.email
-        json.uuid invitation.friend.uuid
-        json.absolute_url invitation.friend.absolute_url
-        json.avatar invitation.friend.avatar
-        json.avatar_thumbnail invitation.friend.avatar_thumbnail
-        json.cover invitation.friend.cover
-        json.cover_cropped invitation.friend.cover_cropped
+      json.from_user do
+        json.id invitation.user.id
+        json.first_name invitation.user.first_name
+        json.last_name invitation.user.last_name
+        json.email invitation.user.email
+        json.uuid invitation.user.uuid
+        json.absolute_url invitation.user.absolute_url
+        json.avatar invitation.user.avatar
+        json.avatar_thumbnail invitation.user.avatar_thumbnail
+        json.cover invitation.user.cover
+        json.cover_cropped invitation.user.cover_cropped
       end
     end
   end
