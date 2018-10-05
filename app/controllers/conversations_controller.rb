@@ -48,8 +48,6 @@ class ConversationsController < ApplicationController
 	def validate_message_params
 		@error_message = []
 		@error_message << "Users must be present." if !params[:users].present?
-		@error_message << "title must be present." if !params[:title].present?
-
 		if @error_message.present?
 			render(json: {ok: false, error: @error_message, status: 401}, status: 401) and return
 		end

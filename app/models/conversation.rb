@@ -1,5 +1,5 @@
 class Conversation < ApplicationRecord
-	has_many :conversation_users, dependent: :destroy
+  has_many :conversation_users, dependent: :destroy
   accepts_nested_attributes_for :conversation_users, :allow_destroy => true
   
   has_many :users, through: :conversation_users
