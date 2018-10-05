@@ -6,8 +6,8 @@ if @invitations.present?
       json.id invitation.id 
       json.message invitation.message
       json.status  invitation.status == 1 ? "pending" : "approved"
-      json.created_at invitation.created_at
-      json.updated_at invitation.updated_at
+      json.created invitation.created_at
+      json.updated invitation.updated_at
       json.from_user do
         json.id invitation.user.id
         json.first_name invitation.user.first_name

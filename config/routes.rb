@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   	end
   end
 
-  resources :conversations, only: [:index, :create] do
+  resources :conversations, only: [:index, :create, :show] do
   	collection do
   		post :mark_read
   		post :archive
@@ -27,4 +27,5 @@ Rails.application.routes.draw do
   		post :accept
   	end
   end
+  # get 'community_api_documentation' => 'home#community_api_docs'
 end

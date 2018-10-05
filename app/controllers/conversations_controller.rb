@@ -1,5 +1,5 @@
 class ConversationsController < ApplicationController
-	before_action :validate_token, only: [:index, :create, :mark_read, :archive]
+	before_action :validate_token, only: [:index, :create, :mark_read, :archive, :show]
 	before_action :validate_message_params, only: :create
 
 	def index
@@ -18,6 +18,12 @@ class ConversationsController < ApplicationController
 		else
 			render(json: {ok: false, error: @conversation.errors.full_messages, status: 401}, status: 401)
 		end				
+	end
+
+	def show
+		@conversations = []
+		@conversations << Conversation.includes(conversation_users: :user, messages: [:readers]).find(params[:id].to_i)
+		render 'archive'
 	end
 
 	def mark_read
