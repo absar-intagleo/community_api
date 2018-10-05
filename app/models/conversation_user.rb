@@ -5,7 +5,7 @@ class ConversationUser < ApplicationRecord
   belongs_to :conversation
 
 
-  scope :has_archived, -> { where(is_archived: true) }
+  scope :has_archived, -> { where.not(archived_at: nil) }
   
   scope :except_creator, -> { where(is_creator: false) }
   scope :only_creator, -> { where(is_creator: true) }

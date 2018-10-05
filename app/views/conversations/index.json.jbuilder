@@ -1,19 +1,24 @@
 json.ok true
+json.count @conversations.try(:count)
 json.results do
   json.array! @conversations.present? && @conversations.each do |conversation|
     json.id conversation.id
-    json.users do
-      json.array! conversation.users.each do |user|
-        json.id user.id
-        json.first_name user.first_name
-        json.last_name user.last_name
-        json.username user.username
-        json.uuid user.uuid
-        json.email user.email
-        json.absolute_url user.absolute_url
-        json.avatar user.avatar
-        json.cover user.cover
+    if conversation.users.present?
+      json.users do
+        json.array! conversation.user.each do |user|
+          json.id user.id
+          json.first_name user.first_name
+          json.last_name user.last_name
+          json.username user.username
+          json.uuid user.uuid
+          json.email user.email
+          json.absolute_url user.absolute_url
+          json.avatar user.avatar
+          json.cover user.cover
+        end
       end
+    else
+      json.users []
     end
     json.title conversation.title
     json.creator do
@@ -28,12 +33,11 @@ json.results do
       json.avatar creator.avatar
       json.cover creator.cover
     end
-    json.archived_by conversation.conversation_users.has_archived.map(&:user_id)
     json.last_message do
       message = conversation.messages.last
       if message.present?
         json.id message.id
-        json.users do
+        json.user do
           message_user = message.user
           json.id message_user.id
           json.first_name message_user.first_name
@@ -45,16 +49,77 @@ json.results do
           json.avatar message_user.avatar
           json.cover message_user.cover
         end
-        json.conversation_id message.conversation.id
+        json.conversation message.conversation.id
         json.text message.text
         json.attachment message.attachment.attachment.present? ? request.base_url + url_for(message.attachment) :nil
         json.created_at message.created_at
         json.updated_at message.updated_at
-        json.read_by message.readers.map(&:user_id)
+        if message.readers.present?
+          json.read_by do
+            json.array! message.readers.each do |reader|
+              user = reader.user
+              json.user do
+                json.id user.id
+                json.first_name user.first_name
+                json.last_name user.last_name
+                json.username user.username
+                json.uuid user.uuid
+                json.email user.email
+                json.absolute_url user.absolute_url
+                json.avatar user.avatar
+                json.cover user.cover
+              end
+              json.date reader.created_at
+            end  
+          end
+        else
+          json.read_by []
+        end
       end
     end
     json.created_at conversation.created_at
     json.updated_at conversation.updated_at
-    json.read_by conversation.conversation_users.read_by.map(&:user_id)
+    if conversation.conversation_users.present? && conversation.conversation_users.has_archived.present?
+      json.archived_by do
+        json.array! conversation.conversation_users.has_archived.each do |conversation_user|
+          json.user do
+            archived_by_user = conversation_user.user
+            json.id archived_by_user.id
+            json.first_name archived_by_user.first_name
+            json.last_name archived_by_user.last_name
+            json.username archived_by_user.username
+            json.uuid archived_by_user.uuid
+            json.email archived_by_user.email
+            json.absolute_url archived_by_user.absolute_url
+            json.avatar archived_by_user.avatar
+            json.cover archived_by_user.cover
+          end
+          json.date conversation_user.archived_at
+        end
+      end
+    else
+      json.archived_by []
+    end
+    if (conversation.conversation_users.present? && conversation.conversation_users.read_by.count > 0 )
+      json.read_by do      
+        json.array! conversation.conversation_users.read_by.each do |conversation_user|
+          json.user do
+            read_by_user = conversation_user.user
+            json.id read_by_user.id
+            json.first_name read_by_user.first_name
+            json.last_name read_by_user.last_name
+            json.username read_by_user.username
+            json.uuid read_by_user.uuid
+            json.email read_by_user.email
+            json.absolute_url read_by_user.absolute_url
+            json.avatar read_by_user.avatar
+            json.cover read_by_user.cover
+          end
+          json.date conversation_user.updated_at
+        end  
+      end
+    else
+      json.read_by []
+    end
   end
 end

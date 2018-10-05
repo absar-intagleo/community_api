@@ -4,7 +4,7 @@ json.id @conversation.id
 json.title @conversation.title
 json.archived_by @conversation.conversation_users.has_archived.map(&:user_id)
 json.last_message @conversation.messages.try(:last)
-json.read_by @conversation.id
+json.read_by []
 json.absolute_url @conversation.absolute_url
 json.created_at @conversation.created_at
 json.updated_at @conversation.updated_at

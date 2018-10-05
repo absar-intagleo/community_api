@@ -32,9 +32,11 @@ class ConversationsController < ApplicationController
 	end
 
 	def archive
-		@conversation = ConversationUser.where('user_id = ? AND conversation_id = ?', @current_user.id, params[:conversation_id]).try(:first)
-		if @conversation.present? && @conversation.archive!
-			render(json: {ok: true}, status: 200)
+		@conversation_users = ConversationUser.where('user_id = ? AND conversation_id = ?', @current_user.id, params[:conversation_id])
+		if @conversation_users.present? && @conversation_users.try(:first).archive!
+			@conversations = []
+			@conversations << @conversation_users.first.conversation
+			render 'archive', status: 200
 		else
 			render(json: {ok: false, error: "Not Found"}, status: 404)
 		end

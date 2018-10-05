@@ -9,7 +9,23 @@ if @messages.present?
 			json.attachment message.attachment.attachment.present? ? request.base_url + url_for(message.attachment) :nil
 			json.created_at message.created_at
 			json.updated_at message.updated_at
-			json.read_by message.readers.map(&:user_id)
+			json.read_by do
+				json.array! message.readers.present? && message.readers.each do |reader|
+          user = reader.user
+          json.user do
+            json.id user.id
+            json.first_name user.first_name
+            json.last_name user.last_name
+            json.username user.username
+            json.uuid user.uuid
+            json.email user.email
+            json.absolute_url user.absolute_url
+            json.avatar user.avatar
+            json.cover user.cover
+          end
+          json.readby_date reader.created_at
+        end
+			end
 			json.user do
 				message_user = message.user
 			  json.id message_user.id

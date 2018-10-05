@@ -36,7 +36,7 @@ class UsersController < ApplicationController
     elsif params[:email].present?
       User.except_current_user(@current_user.id).where("email like ?", "%#{params[:email].downcase}%")
     end
-    render(json: {ok: true, count: @users.count, users: @users, status: 200}, status: 200)   
+    render(json: {ok: true, count: @users.count, results: @users, status: 200}, status: 200)   
 	end
 
 	def login
