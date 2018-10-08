@@ -1,7 +1,8 @@
 json.ok true
 json.count @friends.present? ? @friends.count : 0
 json.results do
-	json.array! @friends.present? && @friends.each do |friend|
+  if @friends.present?  
+	json.array! @friends.each do |friend|
 		user = friend.user
 		json.id user.id
     json.first_name user.first_name
@@ -14,4 +15,7 @@ json.results do
     json.cover user.cover
     json.created_at friend.created_at
 	end
+  else
+    json.array! []
+  end
 end
