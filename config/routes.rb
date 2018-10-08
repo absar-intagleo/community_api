@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   resources :messages, only: [:index, :create] do
   	collection do
   		post :mark_read
+      post :delete
   	end
   end
 

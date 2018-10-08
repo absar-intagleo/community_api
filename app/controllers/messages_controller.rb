@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-	before_action :validate_token, only: [:index, :create, :mark_read]
+	before_action :validate_token, only: [:index, :create, :mark_read, :delete]
 	before_action :validate_message_params, only: :create
 
 	def index
@@ -30,11 +30,28 @@ class MessagesController < ApplicationController
 		end
 	end
 
+	def delete
+		@messages = Message.where('id IN (?)',  params[:message_ids].gsub!("[", "").gsub!("]", "").split(",").map(&:to_i))
+		if @messages.present? && @messages.destroy_all
+			render(json: {success: true}, status: 200)
+		else
+			render(json: {ok: false, error: "Message not found"}, status: 401)
+		end
+	end
+
 	private
 	def validate_message_params
 		@error_message = []
 		@error_message << "conversation_id must be present." unless params[:conversation_id].present?
 		@error_message << "text or attachment must be present." if params[:text].blank? && params[:attachment].blank?
+
+		if @error_message.present?
+			render(json: {ok: false, error: @error_message, status: 401}, status: 401) and return
+		end
+	end
+
+	def validate_delete_params
+		@error_message << "message_ids must be present." if params[:message_ids].blank?
 
 		if @error_message.present?
 			render(json: {ok: false, error: @error_message, status: 401}, status: 401) and return

@@ -2,9 +2,9 @@ class Message < ApplicationRecord
   belongs_to :user
   belongs_to :conversation
 
-  has_many :readers
+  has_many :readers, dependent: :destroy
   has_many :users, through: :readers
-  has_one_attached :attachment
+  has_one_attached :attachment, dependent: :destroy
 
   
   after_create :mark_conversation_as_unread_for_all_other_users
