@@ -44,7 +44,8 @@ class UsersController < ApplicationController
     if response[:status] == 404
       render json: response, status: 404
     else
-  		render json: response
+      user = User.find_by_email(params[:email])
+  		render json: response.merge!(community_membership_id: user.id)
     end
 	end
 

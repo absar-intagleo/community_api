@@ -4,14 +4,14 @@ class MessagesController < ApplicationController
 
 	def index
 		@messages = Conversation.includes(messages: [:readers, :user]).find(params[:conversation_id]).try(:messages) rescue nil
-		render 'index', status: @messages.present? ? 200 : 404
+		render 'index.json', status: @messages.present? ? 200 : 404
 	end
 
 	def create
 		@message = Message.new(conversation_id: params[:conversation_id], text: params[:text], user_id: @current_user.id)
 		@message.attachment.attach(params[:attachment]) if params[:attachment].present?
 		if @message.save!
-			render 'create'
+			render 'create.json'
 		else
 			render(json: {ok: false, error: @message.errors.full_messages, status: 401}, status: 404)
 		end		

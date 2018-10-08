@@ -4,6 +4,7 @@ class ConversationsController < ApplicationController
 
 	def index
 		@conversations = @current_user.conversations.includes(conversation_users: :user, messages: [:readers])
+		render 'index.json'
 	end
 
 	def create
@@ -23,7 +24,7 @@ class ConversationsController < ApplicationController
 	def show
 		@conversations = []
 		@conversations << Conversation.includes(conversation_users: :user, messages: [:readers]).find(params[:id].to_i)
-		render 'archive'
+		render 'archive.json'
 	end
 
 	def mark_read
@@ -42,7 +43,7 @@ class ConversationsController < ApplicationController
 		if @conversation_users.present? && @conversation_users.try(:first).archive!
 			@conversations = []
 			@conversations << @conversation_users.first.conversation
-			render 'archive', status: 200
+			render 'archive.json', status: 200
 		else
 			render(json: {ok: false, error: "Not Found"}, status: 404)
 		end
