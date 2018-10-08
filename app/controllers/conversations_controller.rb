@@ -14,7 +14,7 @@ class ConversationsController < ApplicationController
 			params[:users].present? && params[:users].each do |user_id|
 				@conversation.add_user(user_id)
 			end
-			render 'create'
+			render 'create.json'
 		else
 			render(json: {ok: false, error: @conversation.errors.full_messages, status: 401}, status: 401)
 		end				
