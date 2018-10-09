@@ -1,9 +1,9 @@
 class MessagesController < ApplicationController
-	before_action :validate_token, only: [:index, :create, :mark_read, :delete]
+	# before_action :validate_token, only: [:index, :create, :mark_read, :delete]
 	before_action :validate_message_params, only: :create
 
 	def index
-		@messages = Conversation.includes(messages: [:readers, :user]).find(params[:conversation_id]).try(:messages) rescue nil
+		@messages = Message.includes(:users, readers: :user).where(conversation_id: params[:conversation_id]) rescue nil
 		render 'index.json', status: 200
 	end
 
