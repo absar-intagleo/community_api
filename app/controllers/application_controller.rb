@@ -9,7 +9,7 @@ class ApplicationController < ActionController::API
       if !request.headers['Authorization'].include?("Token ") || request.headers['Authorization'].split(" ").present? && !(request.headers['Authorization'].split(" ").count > 1)
         @error_message << "Invalid Authorization token"
       else  
-        @current_user = User.find_by_access_token(request.headers['Authorization'].split(" ")[1])    
+        @current_user = User.find_by_community_token(request.headers['Authorization'].split(" ")[1])    
         if @current_user.blank?
           @error_message << "Invalid Authorization token"
         end
