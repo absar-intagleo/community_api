@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-	# before_action :validate_token, only: [:index, :create, :mark_read, :delete]
+	before_action :validate_token, only: [:index, :create, :mark_read, :delete]
 	before_action :validate_message_params, only: :create
 
 	def index
