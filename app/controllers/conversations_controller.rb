@@ -4,6 +4,8 @@ class ConversationsController < ApplicationController
 
 	def index
 		@conversations = @current_user.conversations.includes(conversation_users: :user, messages: [:readers])
+
+		@conversations = @conversations.only_unarchived_conversations(@conversations, @current_user.id)
 		render 'index.json'
 	end
 
