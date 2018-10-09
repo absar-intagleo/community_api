@@ -42,7 +42,7 @@ if @messages.present?
 		end
 	end
 else
-  json.ok false
-  json.status 404
-  json.detail "Not Found"
+  json.ok true
+	json.id params[:conversation_id]
+	json.results []
 end
