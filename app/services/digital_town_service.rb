@@ -46,7 +46,7 @@ class DigitalTownService
       profile = userProfile(session)
       community_login_res = userCommunityLogin({access_token: token["accessToken"]})
       update_user(token, profile, community_login_res)
-      user.merge!(:profile => profile, :access_token => token["accessToken"], community_token: community_login_res["token"], community_id: community_login_res["last_active_community"].present? && community_login_res["last_active_community"]["id"].present? ? community_login_res["last_active_community"]["id"] : "")
+      user.merge!(:profile => profile, :access_token => token["accessToken"], community: community_login_res)
     end
   end
 
