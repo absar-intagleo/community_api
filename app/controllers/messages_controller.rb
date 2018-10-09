@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
 
 	def index
 		@messages = Conversation.includes(messages: [:readers, :user]).find(params[:conversation_id]).try(:messages) rescue nil
-		render 'index.json', status: @messages.present? ? 200 : 404
+		render 'index.json', status: 200
 	end
 
 	def create
