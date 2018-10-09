@@ -31,7 +31,7 @@ class MessagesController < ApplicationController
 	end
 
 	def delete
-		@messages = Message.where('id IN (?)',  params[:message_ids].gsub!("[", "").gsub!("]", "").split(",").map(&:to_i))
+		@messages = Message.where('id IN (?)',  params[:message_ids].map(&:to_i))
 		if @messages.present? && @messages.destroy_all
 			render(json: {success: true}, status: 200)
 		else
