@@ -9,6 +9,7 @@ class DigitalTownService
     'details' => '/api/users',
     'profile' => '/api/profile',
     'profile_image' => '/api/images/save',
+    'community_login' => '/api/v1/auth-dt/token-login/',
     'forgot' => '/api/password/email',
     'google' => "/login/google?callbacksocial=",
     'facebook' => "/login/facebook?callbacksocial=",
@@ -18,7 +19,8 @@ class DigitalTownService
 
   APIBASEURLS =  {
     "login_url" => ENV['SSO_LOGIN_URL'],
-    "profile_url" => ENV['SSO_PROFILE_URL']
+    "profile_url" => ENV['SSO_PROFILE_URL'],
+    "community_url" => ENV['SSO_COMMUNITY_URL']
   }
 
   def registerUser(user_info)
@@ -42,15 +44,16 @@ class DigitalTownService
         "uuid" => user['uuid']
       }
       profile = userProfile(session)
-      update_user(token, profile)
-      user.merge!(:profile => profile, :access_token => token["accessToken"])
+      community_login_res = userCommunityLogin({access_token: token["accessToken"]})
+      update_user(token, profile, community_login_res)
+      user.merge!(:profile => profile, :access_token => token["accessToken"], community_token: community_login_res["token"], community_id: community_login_res["last_active_community"].present? && community_login_res["last_active_community"]["id"].present? ? community_login_res["last_active_community"]["id"] : "")
     end
   end
 
   def userDetail(token)
-      header = {}
-      header[:authorization] = "Bearer #{token}"
-      apiCallURL(APIBASEURLS['login_url'] + APIENDPOINTS['details'], nil, "GET", header)
+    header = {}
+    header[:authorization] = "Bearer #{token}"
+    apiCallURL(APIBASEURLS['login_url'] + APIENDPOINTS['details'], nil, "GET", header)
   end
 
   def userProfile(session)
@@ -59,7 +62,13 @@ class DigitalTownService
     apiCallURL(APIBASEURLS['profile_url'] + APIENDPOINTS['profile'] + "?userID=#{session['user_id']}", nil, "GET", header)
   end
 
-  def update_user(token, profile)
+  def userCommunityLogin(param)
+    header = {}
+    header["Content-Type"] = "application/x-www-form-urlencoded"
+    apiCallURL(APIBASEURLS['community_url'] + APIENDPOINTS['community_login'], param, "POST", header)
+  end
+
+  def update_user(token, profile, community_login_res)
     @user = User.find_by_email(profile['data']['profile']['email'])
     if @user.present? 
       @user.update_attributes(
@@ -72,8 +81,10 @@ class DigitalTownService
         avatar: profile['data']['images'][0].present? ? profile['data']['images'][0]['imageURL'] : "",
         avatar_thumbnail: nil,
         access_token: token["accessToken"],
-        token_created_at: DateTime.now
-        )
+        token_created_at: DateTime.now,
+        community_token: community_login_res["token"],
+        community_id: community_login_res["last_active_community"].present? && community_login_res["last_active_community"]["id"].present? ? community_login_res["last_active_community"]["id"] : ""
+      )
     else
       @user = User.new(
         uuid: profile['data']['profile']['profileUserUUID'],
@@ -85,7 +96,9 @@ class DigitalTownService
         avatar: profile['data']['images'][0].present? ? profile['data']['images'][0]['imageURL'] : "",
         avatar_thumbnail: nil,
         access_token: token["accessToken"],
-        token_created_at: DateTime.now
+        token_created_at: DateTime.now,
+        community_token: community_login_res["token"],
+        community_id: community_login_res["last_active_community"].present? && community_login_res["last_active_community"]["id"].present? ? community_login_res["last_active_community"]["id"] : ""
       )
       @user.save!
     end
