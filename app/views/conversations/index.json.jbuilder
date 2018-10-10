@@ -35,7 +35,7 @@ json.results do
         json.cover creator.cover
       end
       json.last_message do
-        message = conversation.messages.last
+        message = conversation.messages.order("created_at DESC").first
         if message.present?
           json.id message.id
           json.user do
