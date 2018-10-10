@@ -68,7 +68,6 @@ class UsersController < ApplicationController
     @error_message << "Password must be present." if !params[:password].present?
     @error_message << "first_name must be present." if !params[:first_name].present?
     @error_message << "last_name must be present." if !params[:last_name].present?
-    @error_message << "phone must be present." if !params[:phone].present?
     @error_message << "profileCityID must be present." if !params[:profileCityID].present?
     if @error_message.present?
       render(json: {ok: false, error: @error_message, status: 401}, status: 401) and return
