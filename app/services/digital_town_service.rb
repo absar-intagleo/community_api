@@ -45,7 +45,7 @@ class DigitalTownService
       }
       profile = userProfile(session)
       community_login_res = userCommunityLogin({access_token: token["accessToken"]})
-      update_user(token, profile, community_login_res)
+      update_user(token, profile, community_login_res, login_params[:email])
       user.merge!(:profile => profile, :access_token => token["accessToken"], :refresh_token => token["refreshToken"], community: community_login_res)
     end
   end
@@ -68,23 +68,32 @@ class DigitalTownService
     apiCallURL(APIBASEURLS['community_url'] + APIENDPOINTS['community_login'], param, "POST", header)
   end
 
-  def update_user(token, profile, community_login_res)
-    @user = User.find_by_email(profile['data']['profile']['email'])
-    if @user.present? 
-      @user.update_attributes(
-        uuid: profile['data']['profile']['profileUserUUID'],
-        first_name: profile['data']['profile']['profileFirstName'],
-        last_name: profile['data']['profile']['profileLastName'],
-        email: profile['data']['profile']['email'],      
-        phone_number:  profile['data']['phone'].present? ? profile['data']['phone']['contactPhoneNumber'] : "",
-        absolute_url: nil,
-        avatar: profile['data']['images'][0].present? ? profile['data']['images'][0]['imageURL'] : "",
-        avatar_thumbnail: nil,
-        access_token: token["accessToken"],
-        token_created_at: DateTime.now,
-        community_token: community_login_res["token"],
-        community_id: community_login_res["last_active_community"].present? && community_login_res["last_active_community"]["id"].present? ? community_login_res["last_active_community"]["id"] : ""
-      )
+  def update_user(token, profile, community_login_res, email)
+    @user = User.find_by_email(email)
+    if @user.present?
+      if !profile["message"].present?
+        @user.update_attributes(
+          uuid: profile['data']['profile']['profileUserUUID'],
+          first_name: profile['data']['profile']['profileFirstName'],
+          last_name: profile['data']['profile']['profileLastName'],
+          email: profile['data']['profile']['email'],      
+          phone_number:  profile['data']['phone'].present? ? profile['data']['phone']['contactPhoneNumber'] : "",
+          absolute_url: nil,
+          avatar: profile['data']['images'][0].present? ? profile['data']['images'][0]['imageURL'] : "",
+          avatar_thumbnail: nil,
+          access_token: token["accessToken"],
+          token_created_at: DateTime.now,
+          community_token: community_login_res["token"],
+          community_id: community_login_res["last_active_community"].present? && community_login_res["last_active_community"]["id"].present? ? community_login_res["last_active_community"]["id"] : ""
+        )
+      else
+        @user.update_attributes(
+          access_token: token["accessToken"],
+          token_created_at: DateTime.now,
+          community_token: community_login_res["token"],
+          community_id: community_login_res["last_active_community"].present? && community_login_res["last_active_community"]["id"].present? ? community_login_res["last_active_community"]["id"] : ""
+        )
+      end
     else
       @user = User.new(
         uuid: profile['data']['profile']['profileUserUUID'],
