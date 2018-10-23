@@ -28,5 +28,5 @@ Rails.application.routes.draw do
   		post :accept
   	end
   end
-  # get 'community_api_documentation' => 'home#community_api_docs'
+  get 'api_docs' => 'home#community_api_docs'
 end

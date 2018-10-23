@@ -1,0 +1,1078 @@
+swagger: '2.0'
+info:
+  title: DigitalTown | Community API
+  description: DigitalTown Community API
+  version: 1.1.0
+host: enigmatic-dawn-98762.herokuapp.com
+schemes:
+  - https
+basePath: /
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Sign Up
+      description: Sign up user to digitaltown
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: first_name
+          in: formData
+          description: 'First name of user'
+          required: true
+          type: string
+        - name: last_name
+          in: formData
+          description: 'Last name of user'
+          required: true
+          type: string
+        - name: email
+          in: formData
+          description: 'Email of user'
+          required: true
+          type: string
+        - name: phone
+          in: formData
+          description: 'Phone number of user'
+          required: false
+          type: string
+        - name: password
+          in: formData
+          description: 'Password of account'
+          required: true
+          type: string
+        - name: profileCityID
+          in: formData
+          description: 'User profile city id'
+          required: false
+          type: number
+      responses:
+        401:
+          description: Invalid Credentials
+          schema:
+            $ref: '#/definitions/response_401'
+        200:
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/Users'
+  
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Login
+      description: Login through DigitalTown SSO
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: email
+          in: formData
+          description: 'Email of account'
+          required: true
+          type: string
+        - name: password
+          in: formData
+          description: 'Password of account'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/login'
+        404:
+          description: Invalid Credentials
+          schema:
+            $ref: '#/definitions/response_404'
+  
+  /users/members:
+    get:
+      tags:
+        - Users
+      summary: Get Members List
+      description: Get members list on the basis of search attributes
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: slug_name
+          in: query
+          description: 'First name or last name search'
+          required: true
+          type: string
+        - name: email
+          in: query
+          description: 'Email to search'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/membersList'
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Invalid API key or no API key     
+  
+  /conversations:
+    post:
+      tags:
+        - Conversations
+      summary: Create Conversation
+      description: Create conversation including some users
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: title
+          in: formData
+          description: 'Name of Conversation'
+          required: true
+          type: string
+        - name: users
+          in: formData
+          description: 'Ids of users to be added in conversation'
+          required: true
+          type: array
+          items: 
+            type: integer
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/conversation'
+        401:
+          $ref: '#/definitions/response_401'
+    get:
+      tags:
+        - Conversations
+      summary: Get Conversations
+      description: Get conversations list on the basis of user
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/conversations'
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Invalid API key or no API key
+  /conversations/{conversationId}:
+    get:
+      tags:
+        - Conversations
+      summary: Fetch Conversation by Id
+      description: Get conversation on the basis of user id and conversation id
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: conversationId
+          in: path
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/conversations'
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Invalid API key or no API key
+  
+  /conversations/mark_read:
+    post:
+      tags:
+        - Conversations
+      summary: Mark Conversation Read
+      description: Mark a Conversation as read on the basis of user
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: conversation_id
+          in: formData
+          description: 'Id of conversation that needs to be marked as read'
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/markRead'
+        404:
+          $ref: '#/definitions/response_404'  
+        
+          
+  /conversations/archive:
+    post:
+      tags:
+        - Conversations
+      summary: Archive Conversation
+      description: Archive conversation on the basis of user
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: conversation_id
+          in: formData
+          description: 'Id of conversation to be archived for current user'
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/conversations'
+        404:
+          $ref: '#/definitions/response_404'
+          
+  
+  /messages:
+    post:
+      tags:
+        - Messages
+      summary: Send Message
+      description: Send message in a conversation
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: text
+          in: formData
+          description: 'Text to be sent as message'
+          required: false
+          type: string
+        - name: conversation_id
+          in: formData
+          description: 'Id of conversation in which the message will be sent'
+          required: true
+          type: integer
+        - name: attachment
+          in: formData
+          description: 'File to be sent as message'
+          required: false
+          type: file
+      responses:
+        200:
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/createMessage'
+        404:
+          $ref: '#/definitions/response_404'
+          
+    get:
+      tags:
+        - Messages
+      summary: Get Messages List
+      description: Get messages list on the basis of conversation
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: conversation_id
+          in: query
+          description: 'Conversation Id whose messages need to be fetched'
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/getMessages'
+        401:
+          $ref: '#/definitions/response_401'
+      
+  /messages/mark_read:
+    post:
+      tags:
+        - Messages
+      summary: Mark as Read Message
+      description: Mark a message as read by user
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: message_id
+          in: formData
+          description: 'Id of message to be marked as read'
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/markRead'
+        404:
+          $ref: '#/definitions/response_404'
+        401:
+          $ref: '#/definitions/response_401'
+  /messages/delete:
+    post:
+      tags:
+        - Messages
+      summary: Delete Message
+      description: Delete message from a conversation
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: message_ids
+          in: formData
+          description: 'Ids of messages to be deleted. Must be in format ["1", "2", "3"]'
+          required: true
+          type: string
+      
+      responses:
+        200:
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/deleteMessage'
+        404:
+          $ref: '#/definitions/response_404'
+        401:
+          $ref: '#/definitions/response_401'
+  
+  /invitations:
+    post:
+      tags:
+        - Friends
+      summary: Send Friend Request
+      description: Send friend request to another user
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: friend_id
+          in: formData
+          description: 'Id of user to whom friend request is sent'
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/invitation'
+        '400':
+          description: Invalid request parameters
+        404:
+          $ref: '#/definitions/response_404'
+        401:
+          $ref: '#/definitions/response_401'
+
+    get:
+      tags:
+        - Friends
+      summary: Get Invitations List
+      description: Get invitations list on the basis of user
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/invitations'
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Invalid API key or no API key        
+  
+  /invitations/accept:
+    post:
+      tags:
+        - Friends
+      summary: Accept Friend Request
+      description: Accept friend request from another user
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+        - name: request_id
+          in: formData
+          description: 'Id of friend request to be approved'
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/accept'
+        '400':
+          description: Invalid request parameters
+        404:
+          $ref: '#/definitions/response_404'
+        401:
+          $ref: '#/definitions/response_401'
+      
+  /friendships:
+    get:
+      tags:
+        - Friends
+      summary: Get Friends List
+      description: Get friends list on the basis of user
+      consumes:
+        - multipart/form-data
+      produces:
+        - application
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Must be in this format <i>Token access_token</i>'
+          required: true
+          type: string
+       
+      responses:
+        '200':
+          description: Successful Operation
+          schema:
+            $ref: '#/definitions/friendships'
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Invalid API key or no API key
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  Users:
+    type: object
+    properties:
+      ok:
+        type: boolean
+      accessToken:
+        type: string
+      data:
+        $ref: '#/definitions/CreateUser'
+  CreateUser:
+    properties:
+      id:
+        type: integer
+      uuid:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      active:
+        type: boolean
+      remember_token:
+        type: string
+      verified:
+        type: boolean
+      verification_token: 
+        type: string
+      created_at: 
+        type: string
+      updated_at:
+        type: string
+      message: 
+        type: string
+      details:
+        $ref: '#/definitions/DtDetails'
+      profile:
+        $ref: '#/definitions/Profile'
+  DtDetails:
+    properties:
+      email:
+        type: string
+      phone:
+        type: string
+      method:
+        type: string
+      last_name:
+        type: string
+      first_name:
+        type: string
+      profileCityID:
+        type: string
+  Profile:
+    properties:
+      user:
+        $ref: '#/definitions/ProfileUser'
+  ProfileUser:
+    properties:
+      profile:
+        $ref: '#/definitions/profileUserProfile'
+      contact:
+        $ref: '#/definitions/profileUserContact'
+      address:
+        $ref: '#/definitions/profileUserAddress'
+      email:
+        $ref: '#/definitions/profileUserEmail'
+      phone:
+        $ref: '#/definitions/profileUserPhone'
+  profileUserProfile:
+    properties:
+      profileID: 
+        type: number
+      profileUserID:
+        type: number
+      profileRelationID:
+        type: number
+      profileType:
+        type: number
+      profileFirstName:
+        type: string
+      profileLastName:
+        type: string
+      profileActive:
+        type: number
+      profileCreated:
+        type: string
+      profileUpdated:
+        type: string
+      profileAbout:
+        type: string
+      profileInterests:
+        type: string
+      profileFacebook:
+        type: string
+      profileInstagram:
+        type: string
+      profileTwitter:
+        type: string
+      profileLinkedin:
+        type: string
+      url_hash:
+        type: string
+      profileCityID:
+        type: number
+      profileOptOutMarketing:
+        type: number
+      profileUserUUID:
+        type: string
+      profileAcceptTermsConditions:
+        type: number
+      email:
+        type: string
+  profileUserContact:
+    properties:
+      contactID: 
+        type: number
+      contactSSOID: 
+        type: number
+      contactProfileID:
+        type: string
+      contactFirstName:
+        type: string
+      contactLastName:
+        type: string
+      contactPrimary:
+        type: string
+      contactPermissions:
+        type: string
+      contactActive:
+        type: string
+      contactCreated:
+        type: string
+      contactUpdated:
+        type: string
+  profileUserAddress:
+    properties:
+      contactAddressID:
+        type: number
+      contactAddressRelationID:
+        type: number
+      contactAddressAddress: 
+        type: string
+      contactAddressCity:
+        type: number
+      contactAddressState:
+        type: string
+      contactAddressCountry:
+        type: number
+      contactAddressZipcode:
+        type: string
+      contactAddressPrimary:
+        type: string
+      contactAddressActive:
+        type: number
+      contactAddressCreated:
+        type: string
+      contactAddressUpdated:
+        type: string
+  profileUserEmail:
+    properties:
+      contactEmailID:
+        type: number
+      contactEmailRelationID:
+        type: number
+      contactEmailAddress:
+        type: string
+      contactEmailPrimary:
+        type: number
+      contactEmailActive:
+        type: string
+      contactEmailCreated:
+        type: string
+      contactEmailUpdated:
+        type: string
+  profileUserPhone:
+    properties:
+      contactPhoneID:
+        type: number
+      contactPhoneRelationID:
+        type: number
+      contactPhoneNumber:
+        type: string
+      contactPhonePrimary:
+        type: number
+      contactPhoneActive:
+        type: string
+      contactPhoneCreated:
+        type: string
+      contactPhoneUpdated:
+        type: string
+
+  login:
+    properties:
+      id:
+        type: number
+      uuid: 
+        type: string
+      first_name: 
+        type: string
+      last_name: 
+        type: string
+      email: 
+        type: string
+      active:
+        type: boolean
+      remember_token: 
+        type: string
+      verified: 
+        type: boolean
+      verification_token:
+        type: string
+      created_at: 
+        type: string
+      updated_at:
+        type: string 
+      details:
+        $ref: '#/definitions/DtDetails'
+      profile: 
+        $ref: '#/definitions/login_profile'
+      access_token: 
+        type: string
+      refresh_token:
+        type: string
+      community_membership_id:
+        type: number
+      community:
+        $ref: '#/definitions/community'
+  community:
+    properties:
+      id: 
+        type: number
+      username:
+        type: string
+      email: 
+        type: string
+      token: 
+        type: string
+      last_active_community:
+        $ref: '#/definitions/lastActiveCommunity'
+  lastActiveCommunity:
+    properties:
+      id:
+        type: number
+      name: 
+        type: string
+      slug_name: 
+        type: string
+      absolute_url: 
+        type: string
+      deactivated:
+        type: boolean
+  login_profile:
+    properties:
+      data:
+        $ref: '#/definitions/loginDataProfile'
+  loginDataProfile:
+    properties:
+      profile:
+        $ref: '#/definitions/ProfileUser'
+
+  membersList:
+    properties:
+      ok:
+        type: boolean
+      count:
+        type: number
+      results:
+        type: array
+        items:
+           $ref: '#/definitions/usersList'
+      status:
+        type: number
+  usersList:
+    properties:
+      id:
+        type: number
+      first_name:
+        type: string 
+      last_name:
+        type: string 
+      username:
+        type: string
+      uuid:
+        type: string
+      email:
+        type: string
+      absolute_url:
+        type: string
+      avatar:
+        type: string
+      avatar_thumbnail:
+        type: string
+      cover: 
+        type: string
+      cover_cropped:
+        type: string
+      created_at: 
+        type: string
+      updated_at: 
+        type: string
+      phone_number: 
+        type: string 
+      access_token: 
+        type: string
+      expires_in: 
+        type: string
+      token_created_at: 
+        type: string
+      community_token: 
+        type: string
+      community_id: 
+        type: number
+
+  conversation:
+    properties:
+      ok: 
+        type: boolean
+      status:
+        type: number
+      id: 
+       type: number
+      title:
+        type: string
+      archived_by: 
+        type: array
+        items:
+          $ref: '#/definitions/archivedBy'
+      last_message:
+        $ref: '#/definitions/lastMessage'
+      read_by: 
+        type: array
+        items: 
+          $ref: '#/definitions/readBy'
+      absolute_url:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      users: 
+        type: array
+        items:
+          $ref: '#/definitions/userDetails'
+      creator: 
+        $ref: '#/definitions/userDetails'
+  
+  
+  conversations:
+    properties:
+      ok:
+        type: boolean
+      count:
+        type: integer
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/conversation'
+
+  lastMessage:
+    properties:
+      id:
+        type: integer
+      user:
+        $ref: '#/definitions/userDetails'
+      conversation: 
+        type: number
+      text: 
+        type: string
+      attachment:
+        type: string
+      created_at: 
+        type: string
+      updated_at: 
+        type: string
+      read_by:
+        type: array
+        items:
+          $ref: '#/definitions/readBy'
+  
+  readBy:
+    properties:
+      user: 
+        $ref: '#/definitions/userDetails'
+      date: 
+        type: string
+      
+  archivedBy:
+    properties:
+      user: 
+        $ref: '#/definitions/userDetails'
+      date: 
+        type: string
+  
+  markRead:
+    properties:
+      ok:
+        type: boolean
+
+  userDetails:
+    properties:
+      id:
+        type: string
+      first_name: 
+        type: string
+      last_name: 
+        type: string
+      email: 
+        type: string
+      uuid:
+        type: string
+      absolute_url:
+        type: string
+      avatar:
+        type: string
+      avatar_thumbnail:
+        type: string
+      cover:
+        type: string
+      cover_cropped:
+        type: string
+    
+  createMessage:
+    properties:
+      ok: 
+        type: boolean
+      status:
+        type: number
+      id: 
+        type: number
+      conversation:
+        type: number
+      text: 
+        type: string
+      attachment:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      read_by: 
+        type: array
+        items:
+          $ref: '#/definitions/readBy'
+      user: 
+        $ref: '#/definitions/userDetails'
+        
+  getMessages:
+    properties:
+      ok: 
+        type: boolean
+      id:
+        type: string
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/lastMessage'
+          
+  invitation:
+    properties:
+      ok:
+        type: boolean
+      status:
+        type: number
+      id:
+        type: number
+      message:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      from_user:
+        $ref: '#/definitions/userDetails'
+      to_user:
+        $ref: '#/definitions/userDetails'
+  
+  invitations:
+    properties:
+      ok:
+        type: boolean
+      status: 
+        type: number
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/invitationResults'
+  
+  invitationResults:
+    properties:
+      id:
+        type: number
+      message:
+        type: string
+      status:
+        type: string
+      created:
+        type: string
+      updated:
+        type: string
+      from_user:
+        $ref: '#/definitions/userDetails'
+  
+  accept:
+    properties:
+      ok:
+        type: boolean
+        
+  friendships:
+    properties:
+      ok:
+        type: boolean
+      count:
+        type: number
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/userDetails'
+  
+  deleteMessage:
+    properties:
+      success:
+        type: boolean
+
+  response_401:
+    properties:
+      ok:
+        type: boolean
+      error:
+        type: string
+  
+  response_404:
+    properties:
+      ok:
+        type: boolean
+      error:
+        type: string
