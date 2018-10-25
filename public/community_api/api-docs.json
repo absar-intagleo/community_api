@@ -484,7 +484,7 @@ paths:
           description: 'Must be in this format <i>Token access_token</i>'
           required: true
           type: string
-        - name: request_id
+        - name: user_id
           in: formData
           description: 'User id of friend request sender to be approved'
           required: true
