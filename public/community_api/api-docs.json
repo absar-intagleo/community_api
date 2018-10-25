@@ -486,7 +486,7 @@ paths:
           type: string
         - name: request_id
           in: formData
-          description: 'Id of friend request to be approved'
+          description: 'User id of friend request sender to be approved'
           required: true
           type: integer
       responses:
