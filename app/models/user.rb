@@ -12,4 +12,5 @@ class User < ApplicationRecord
 
 
   scope :except_current_user, -> (current_user_id) { where.not(id: current_user_id) }
+  scope :with_same_community, -> (current_community_id) { where(community_id: current_community_id) }
 end
