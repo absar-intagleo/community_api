@@ -32,9 +32,10 @@ class UsersController < ApplicationController
 
 	def members
     @users = if params[:slug_name].present?
-      User.except_current_user(@current_user.id).with_same_community(@current_user.community_id).where("lower(first_name) like ? OR lower(last_name) like ?", "%#{params[:slug_name]}%", "%#{params[:slug_name].downcase}%")
+      # .with_same_community(@current_user.community_id)
+      User.except_current_user(@current_user.id).where("lower(first_name) like ? OR lower(last_name) like ?", "%#{params[:slug_name]}%", "%#{params[:slug_name].downcase}%")
     elsif params[:email].present?
-      User.except_current_user(@current_user.id).with_same_community(@current_user.community_id).where("email like ?", "%#{params[:email].downcase}%")
+      User.except_current_user(@current_user.id).where("email like ?", "%#{params[:email].downcase}%")
     end
     render(json: {ok: true, count: @users.count, results: @users, status: 200}, status: 200)   
 	end
