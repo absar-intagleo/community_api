@@ -915,7 +915,7 @@ definitions:
   markRead:
     properties:
       ok:
-      type: string
+        type: string
 
   userDetails:
     properties:
