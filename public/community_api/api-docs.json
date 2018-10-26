@@ -3,7 +3,7 @@ info:
   title: DigitalTown | Community API
   description: DigitalTown Community API
   version: 1.1.0
-host: enigmatic-dawn-98762.herokuapp.com
+host: staging-community-api.herokuapp.com
 schemes:
   - https
 basePath: /
