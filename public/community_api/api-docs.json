@@ -70,11 +70,6 @@ paths:
       produces:
         - application
       parameters:
-        - name: Authorization
-          in: header
-          description: 'Must be in this format <i>Token access_token</i>'
-          required: true
-          type: string
         - name: email
           in: formData
           description: 'Email of account'
@@ -114,12 +109,12 @@ paths:
         - name: slug_name
           in: query
           description: 'First name or last name search'
-          required: true
+          required: false
           type: string
         - name: email
           in: query
           description: 'Email to search'
-          required: true
+          required: false
           type: string
       responses:
         '200':
@@ -154,7 +149,7 @@ paths:
           type: string
         - name: users
           in: formData
-          description: 'Ids of users to be added in conversation'
+          description: 'Ids of users to be added in conversation Must be in format [1, 2]'
           required: true
           type: array
           items: 
@@ -537,8 +532,6 @@ definitions:
   Users:
     type: object
     properties:
-      ok:
-        type: boolean
       accessToken:
         type: string
       data:
@@ -797,8 +790,6 @@ definitions:
 
   membersList:
     properties:
-      ok:
-        type: boolean
       count:
         type: number
       results:
@@ -884,8 +875,6 @@ definitions:
   
   conversations:
     properties:
-      ok:
-        type: boolean
       count:
         type: integer
       results:
@@ -930,8 +919,6 @@ definitions:
   
   markRead:
     properties:
-      ok:
-        type: boolean
 
   userDetails:
     properties:
@@ -958,8 +945,6 @@ definitions:
     
   createMessage:
     properties:
-      ok: 
-        type: boolean
       status:
         type: number
       id: 
@@ -983,8 +968,6 @@ definitions:
         
   getMessages:
     properties:
-      ok: 
-        type: boolean
       id:
         type: string
       results:
@@ -994,8 +977,6 @@ definitions:
           
   invitation:
     properties:
-      ok:
-        type: boolean
       status:
         type: number
       id:
@@ -1013,8 +994,6 @@ definitions:
   
   invitations:
     properties:
-      ok:
-        type: boolean
       status: 
         type: number
       results:
@@ -1040,12 +1019,10 @@ definitions:
   accept:
     properties:
       ok:
-        type: boolean
+        type: string
         
   friendships:
     properties:
-      ok:
-        type: boolean
       count:
         type: number
       results:
@@ -1060,16 +1037,12 @@ definitions:
 
   response_401:
     properties:
-      ok:
-        type: boolean
-        default: false
       error:
-        type: string
+        type: array
+        items:
+          string
   
   response_404:
     properties:
-      ok:
-        type: boolean
-        default: false
       error:
         type: string

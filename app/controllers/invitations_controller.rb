@@ -14,7 +14,7 @@ class InvitationsController < ApplicationController
 			render(json: {success: "false", error: "You are already friends"}, status: 404)
 		else
 			@invite = Friendship.find_or_create_by!(user_id: @current_user.id, friend_id: params[:friend_id], message: params[:message], status: 1)
-			render('create.json', status: 404)
+			render('create.json', status: 200)
 		end	
 	end
 

@@ -18,7 +18,7 @@ class MessagesController < ApplicationController
 	end
 
 	def mark_read
-		@message = Message.find(params[:message_id])
+		@message = Message.find(params[:message_id]) rescue nil
 		if @message.present?
 			if @message.readers.find_or_create_by!(user_id: @current_user.id, message_id: @message.id)
 				render(json: {ok: true }, status: 200)
@@ -31,11 +31,12 @@ class MessagesController < ApplicationController
 	end
 
 	def delete
+		params[:message_ids] = JSON.parse(params[:message_ids]) if params[:message_ids].class == String
 		@messages = Message.where('id IN (?)',  params[:message_ids].map(&:to_i))
 		if @messages.present? && @messages.destroy_all
 			render(json: {success: true}, status: 200)
 		else
-			render(json: {ok: false, error: "Message not found"}, status: 401)
+			render(json: {ok: false, error: ["Message not found"]}, status: 401)
 		end
 	end
 

@@ -10,11 +10,19 @@ class ConversationsController < ApplicationController
 	end
 
 	def create
-		params[:conversation].merge!(conversation_users_attributes: [{}])
-		params[:conversation][:conversation_users_attributes][0].merge!(is_creator: true, user_id: @current_user.id)
-		@conversation = @current_user.conversations.build(conversation_params)
+		if params[:conversation].present?
+			params[:conversation].merge!(conversation_users_attributes: [{}])
+			params[:conversation][:conversation_users_attributes][0].merge!(is_creator: true, user_id: @current_user.id)
+			@conversation = @current_user.conversations.build(conversation_params)
+			conversation_user = params[:users]
+		else
+			conversation_user = params["users"].gsub('"', '').split(",").map(&:to_i)
+			@conversation = @current_user.conversations.build(title: params[:title])
+			@conversation.conversation_users.build(user_id: @current_user.id, is_creator: true)
+
+		end
 		if @conversation.save!
-			params[:users].present? && params[:users].each do |user_id|
+			params[:users].present? && conversation_user.each do |user_id|
 				@conversation.add_user(user_id)
 			end
 			render 'create.json'

@@ -19,6 +19,7 @@ class UsersController < ApplicationController
           uuid: @response['data']["uuid"],
           access_token: @response["accessToken"]
         )
+        
         if @user.save
         	render json: @response
         else
@@ -26,7 +27,8 @@ class UsersController < ApplicationController
         end
       end      
     else
-      render(json: @response.merge!(:status => 401), status: 401)
+      @response["error"] = @response["error"].map{|c| c[1]}.try(:flatten) if @response["error"].present?
+      render(json: @response, status: 401)
     end
 	end
 

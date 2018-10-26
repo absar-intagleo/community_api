@@ -14,7 +14,7 @@ gem 'httparty', '~> 0.13.7'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem "aws-sdk-s3", require: false
 gem 'acts_as_archival'
-
+gem 'rack-cors'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
