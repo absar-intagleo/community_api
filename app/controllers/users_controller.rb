@@ -3,6 +3,7 @@ class UsersController < ApplicationController
 	before_action :validate_login_params, only: :login
   before_action :validate_create_params, only: :create
   before_action :validate_members_params, only: :members
+  before_action :downcase_email, only: [:login, :create]
   before_action :validate_token, only: :members
 
 	def create
@@ -56,6 +57,11 @@ class UsersController < ApplicationController
 	end
 
 	private
+
+  def downcase_email
+    params[:email].downcase!
+  end
+
 	def validate_login_params
 		@error_message = []
     @error_message << "Email must be present." if !params[:email].present?
