@@ -69,14 +69,14 @@ class DigitalTownService
   end
 
   def update_user(token, profile, community_login_res, email)
-    @user = User.find_by_email(email)
+    @user = User.find_by_email(email.downcase)
     if @user.present?
       if !profile["message"].present?
         @user.update_attributes(
           uuid: profile['data']['profile']['profileUserUUID'],
           first_name: profile['data']['profile']['profileFirstName'],
           last_name: profile['data']['profile']['profileLastName'],
-          email: profile['data']['profile']['email'],      
+          email: profile['data']['profile']['email'].downcase,      
           phone_number:  profile['data']['phone'].present? ? profile['data']['phone']['contactPhoneNumber'] : "",
           absolute_url: nil,
           avatar: profile['data']['images'][0].present? ? profile['data']['images'][0]['imageURL'] : "",
@@ -99,7 +99,7 @@ class DigitalTownService
         uuid: profile['data']['profile']['profileUserUUID'],
         first_name: profile['data']['profile']['profileFirstName'],
         last_name: profile['data']['profile']['profileLastName'],
-        email: profile['data']['profile']['email'],      
+        email: profile['data']['profile']['email'].downcase,      
         phone_number:  profile['data']['phone'].present? ? profile['data']['phone']['contactPhoneNumber'] : "",
         absolute_url: nil,
         avatar: profile['data']['images'][0].present? ? profile['data']['images'][0]['imageURL'] : "",

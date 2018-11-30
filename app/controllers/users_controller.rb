@@ -15,7 +15,7 @@ class UsersController < ApplicationController
         @user = User.new(
           first_name: @response['data']["first_name"],
           last_name: @response['data']["last_name"],
-          email: @response['data']["email"],
+          email: @response['data']["email"].downcase,
           phone_number: @response['data']["details"]["phone"],
           uuid: @response['data']["uuid"],
           access_token: @response["accessToken"]
